@@ -1,0 +1,18 @@
+# Contrast Ratio Checker
+
+> Web app to check color contrast between text and background against WCAG 2.2 (AA/AAA). Supports hex, RGB, HSL input; shareable URLs; history; and a public API for programmatic checks.
+
+Single-page tool. Enter two colors (hex, rgb, or hsl) to get the contrast ratio and pass/fail for Normal Text AA, Large Text AA, Normal Text AAA, and Large Text AAA.
+
+## Main
+
+- [Contrast Ratio Checker](https://contrast-ratio.vercel.app/): The app (use query params `textColor` and `backgroundColor` to open with pre-filled colors)
+
+## API
+
+- [Check contrast (GET)](https://contrast-ratio.vercel.app/api/check): `?text=HEX&background=HEX` (or `textColor`/`backgroundColor`, or `fg`/`bg`). Returns JSON: `ratio`, `textColor`, `backgroundColor`, `passesAA`, `passesAAA`, `largeTextOnly`. Rate limited (60 req/min per IP).
+- [OG image (GET)](https://contrast-ratio.vercel.app/api/og): `?textColor=&backgroundColor=` for dynamic Open Graph image.
+
+## Optional
+
+- [GitHub repository](https://github.com/fratule/contrast-checker): Source code and setup instructions
