@@ -48,7 +48,16 @@ export function HistoryModal({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="lg" className="relative px-2 border-l-0 min-w-[60px]">
+        <Button
+          variant="ghost"
+          size="lg"
+          className="relative px-2 border-l-0 min-w-[60px]"
+          aria-label={
+            history.length > 0
+              ? `Open color history, ${history.length} item${history.length !== 1 ? 's' : ''}`
+              : 'Open color history'
+          }
+        >
           <History className="h-4 w-4" />
           {history.length > 0 && !isLoading && (
             <span className="absolute -top-2 -right-2 min-w-[20px] h-5 px-1.5 bg-primary text-[11px] font-bold text-primary-foreground flex items-center justify-center border border-primary-foreground/20">
@@ -82,7 +91,7 @@ export function HistoryModal({
                 <p className="text-xs text-muted-foreground">{error}</p>
               </div>
               {onRetry && (
-                <Button onClick={onRetry} variant="outline" size="sm" className="mt-4">
+                <Button onClick={onRetry} variant="outline" size="sm" className="mt-4" aria-label="Retry loading history">
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Retry
                 </Button>
@@ -134,12 +143,12 @@ export function HistoryModal({
                   {entry.contrast && (
                     <>
                       {entry.contrast >= 7 && (
-                        <Badge className="bg-green-600 text-white border-green-700 px-3 py-1">
+                        <Badge variant="success" className="px-3 py-1">
                           AAA
                         </Badge>
                       )}
                       {entry.contrast >= 4.5 && entry.contrast < 7 && (
-                        <Badge className="bg-green-500 text-white border-green-600 px-3 py-1">
+                        <Badge variant="success" className="px-3 py-1">
                           AA
                         </Badge>
                       )}
@@ -164,6 +173,7 @@ export function HistoryModal({
                     variant="ghost"
                     onClick={() => onRestore(entry.color1, entry.color2)}
                     className="border-r border-border flex-1"
+                    aria-label="Use this color combination"
                   >
                     Use
                   </Button>
@@ -184,7 +194,7 @@ export function HistoryModal({
                     onClick={() => handleRemove(entry.id)}
                     disabled={isRemoving === entry.id}
                     className="border-l-0 gap-2 px-2.5 sm:px-3"
-                    aria-label="Delete"
+                    aria-label="Remove from history"
                   >
                     {isRemoving === entry.id ? (
                       <LoadingSpinner size="sm" className="h-4 w-4" />
@@ -203,6 +213,7 @@ export function HistoryModal({
                 className="group w-full px-8 py-3 border-2 border-destructive hover:bg-destructive/90 hover:border-destructive/80 transition-all duration-300"
                 onClick={handleClear}
                 disabled={isRemoving !== null}
+                aria-label="Clear all history"
               >
                 <span className="relative inline-flex items-center gap-2">
                   <Trash className="h-5 w-5 transition-transform duration-300 group-hover:rotate-180" />

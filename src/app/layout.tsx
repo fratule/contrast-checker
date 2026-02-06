@@ -12,13 +12,17 @@ const inter = Inter({
   preload: true
 })
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://contrast-ratio.vercel.app"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://contrast-checker.org"
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Contrast Ratio Checker – WCAG 2.2",
   description: "Check color contrast between text and background. Ensure your combinations meet WCAG 2.2 AA and AAA guidelines.",
   keywords: ["contrast ratio", "WCAG", "accessibility", "color contrast", "AA", "AAA", "a11y"],
   authors: [{ name: "Contrast Ratio Checker" }],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Contrast Ratio Checker – WCAG 2.2",
     description: "Check color contrast between text and background. Meet WCAG 2.2 accessibility standards.",
@@ -100,7 +104,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased touch-manipulation`}>
         <ThemeProvider storageKey="contrast-ratio-theme">
           <div className="min-h-screen flex flex-col">
-          <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+          <header className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-40">
             <div className="container mx-auto px-4 py-3 sm:py-4">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1 min-w-0">
@@ -115,6 +119,7 @@ export default function RootLayout({
                     href="https://github.com/fratule/contrast-checker"
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="View project on GitHub"
                     className="text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-3 sm:py-2 rounded-md hover:bg-muted"
                   >
                     <span className="hidden sm:inline">GitHub</span>

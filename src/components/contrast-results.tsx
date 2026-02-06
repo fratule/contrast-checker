@@ -43,7 +43,7 @@ export function ContrastResults({ ratio }: ContrastResultsProps) {
                     {passes ? (
                       <>
                         <span className="text-base font-medium tabular-nums">{result.requirement}:1</span>
-                        <Badge className="bg-green-600 text-white border-green-700 px-2 py-1">
+                        <Badge variant="success" className="px-2 py-1">
                           Pass
                         </Badge>
                       </>

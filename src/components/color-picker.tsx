@@ -184,7 +184,7 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
     <div className="space-y-2">
       <Label htmlFor={label.toLowerCase().replace(' ', '-')}>{label}</Label>
       <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row flex-wrap items-center gap-2 sm:gap-3'}`}>
-        <div className={`relative ${isMobile ? 'flex-1' : 'w-32 shrink-0'}`}>
+        <div className={`relative ${isMobile ? 'flex-1' : 'min-w-40 w-44 shrink-0'}`}>
           {/* Hidden native color input for mobile */}
           {isMobile && (
             <input
@@ -206,7 +206,7 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
             onChange={handleInputChange}
             onBlur={handleInputBlur}
             disabled={disabled}
-            className={`w-full ${isMobile ? 'text-lg py-3 pr-14' : 'w-32'} ${validationError ? 'border-destructive focus:border-destructive' : ''}`}
+            className={`w-full ${isMobile ? 'text-lg py-3 pr-14' : 'min-w-0'} ${validationError ? 'border-destructive focus:border-destructive' : ''}`}
             placeholder="#000000"
             aria-label={ariaLabels.label}
             aria-describedby={`${label.toLowerCase().replace(' ', '-')}-description`}
@@ -258,12 +258,14 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
               <path strokeLinecap="round" strokeLinejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
             </svg>
           </div>
-          {validationError && (
-            <div className="absolute -bottom-5 left-0 right-0 min-w-0 max-w-full">
-              <p className="text-xs text-destructive break-words">{validationError}</p>
-            </div>
-          )}
         </div>
+
+        {/* Validation error: full-width row below input + picker / RGB-HSL */}
+        {validationError && (
+          <div className="w-full basis-full mt-1">
+            <p className="text-xs text-destructive wrap-break-word" role="alert">{validationError}</p>
+          </div>
+        )}
 
         {/* Color format: desktop = column right of picker; mobile = below input+picker */}
         {inputValue && !validationError && (display.rgb || display.hsl) && (

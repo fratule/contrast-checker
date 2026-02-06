@@ -2,7 +2,7 @@
 
 **Check color contrast between text and background — WCAG 2.2 in one place.**
 
-**[Live app](https://contrast-ratio.vercel.app)** · [GitHub](https://github.com/fratule/contrast-checker)
+**[Live app](https://www.contrast-checker.org)** · [GitHub](https://github.com/fratule/contrast-checker)
 
 ---
 
@@ -33,6 +33,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## API
 
+**Base URL:** `https://www.contrast-checker.org`  
 **Endpoint:** `GET` or `POST` `/api/check`
 
 **Rate limit:** 60 requests per minute per IP.
@@ -47,19 +48,19 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Example request (GET)
 
 ```bash
-curl "https://contrast-ratio.vercel.app/api/check?text=%23ffffff&background=%23000000"
+curl "https://www.contrast-checker.org/api/check?text=%23ffffff&background=%23000000"
 ```
 
 Or with `textColor` / `backgroundColor`:
 
 ```bash
-curl "https://contrast-ratio.vercel.app/api/check?textColor=%23ffffff&backgroundColor=%23000000"
+curl "https://www.contrast-checker.org/api/check?textColor=%23ffffff&backgroundColor=%23000000"
 ```
 
 ### Example request (POST)
 
 ```bash
-curl -X POST https://contrast-ratio.vercel.app/api/check \
+curl -X POST https://www.contrast-checker.org/api/check \
   -H "Content-Type: application/json" \
   -d '{"textColor": "#ffffff", "backgroundColor": "#000000"}'
 ```

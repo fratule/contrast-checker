@@ -157,4 +157,32 @@
     opacity: 0.05;
     pointer-events: none;
   }
+
+  /* Toast animations – entry and exit */
+  @keyframes toast-slide-in {
+    0% {
+      transform: translateY(-10px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  @keyframes toast-slide-out {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-8px);
+      opacity: 0;
+    }
+  }
+  .toast-animate-in {
+    animation: toast-slide-in 0.3s ease-out forwards;
+  }
+  .toast-animate-out {
+    animation: toast-slide-out 0.25s ease-in forwards;
+  }
 }

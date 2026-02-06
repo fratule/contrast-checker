@@ -6,12 +6,12 @@ Single-page tool. Enter two colors (hex, rgb, or hsl) to get the contrast ratio 
 
 ## Main
 
-- [Contrast Ratio Checker](https://contrast-ratio.vercel.app/): The app (use query params `textColor` and `backgroundColor` to open with pre-filled colors)
+- [Contrast Ratio Checker](https://contrast-checker.org/): The app (use query params `textColor` and `backgroundColor` to open with pre-filled colors)
 
 ## API
 
-- [Check contrast (GET)](https://contrast-ratio.vercel.app/api/check): `?text=HEX&background=HEX` (or `textColor`/`backgroundColor`, or `fg`/`bg`). Returns JSON: `ratio`, `textColor`, `backgroundColor`, `passesAA`, `passesAAA`, `largeTextOnly`. Rate limited (60 req/min per IP).
-- [OG image (GET)](https://contrast-ratio.vercel.app/api/og): `?textColor=&backgroundColor=` for dynamic Open Graph image.
+- [Check contrast (GET)](https://contrast-checker.org/api/check): `?text=HEX&background=HEX` (or `textColor`/`backgroundColor`, or `fg`/`bg`). Returns JSON: `ratio`, `textColor`, `backgroundColor`, `passesAA`, `passesAAA`, `largeTextOnly`. Rate limited (60 req/min per IP).
+- [OG image (GET)](https://contrast-checker.org/api/og): `?textColor=&backgroundColor=` for dynamic Open Graph image.
 
 ## Optional
 

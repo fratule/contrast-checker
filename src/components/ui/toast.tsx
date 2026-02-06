@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -14,6 +14,7 @@ interface Toast {
 }
 
 const TOAST_EXIT_MS = 250
+const DEFAULT_DURATION = 5000
 
 interface ToastProps {
   toast: Toast
@@ -21,16 +22,23 @@ interface ToastProps {
 }
 
 function ToastComponent({ toast, onRemove }: ToastProps) {
+  const [mounted, setMounted] = useState(false)
   const [exiting, setExiting] = useState(false)
   const removeRef = useRef(onRemove)
   removeRef.current = onRemove
 
   const triggerRemove = useCallback(() => setExiting(true), [])
 
+  useLayoutEffect(() => {
+    const t = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(t)
+  }, [])
+
+  const duration = toast.duration ?? DEFAULT_DURATION
   useEffect(() => {
-    const timer = setTimeout(() => setExiting(true), toast.duration || 5000)
+    const timer = setTimeout(() => setExiting(true), duration)
     return () => clearTimeout(timer)
-  }, [toast.id, toast.duration])
+  }, [toast.id, duration])
 
   useEffect(() => {
     if (!exiting) return
@@ -57,7 +65,7 @@ function ToastComponent({ toast, onRemove }: ToastProps) {
     <div
       className={cn(
         'relative flex items-center gap-3 p-4 rounded-lg border shadow-lg',
-        exiting ? 'animate-toast-exit' : 'animate-slide-down',
+        exiting ? 'toast-animate-out' : mounted ? 'toast-animate-in' : 'opacity-0',
         bgColors[toast.type]
       )}
     >
