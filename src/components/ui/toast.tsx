@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react'
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export type ToastType = 'success' | 'error' | 'info'
 
@@ -13,41 +14,34 @@ interface Toast {
   duration?: number
 }
 
-const TOAST_EXIT_MS = 250
 const DEFAULT_DURATION = 5000
 
-interface ToastProps {
-  toast: Toast
-  onRemove: (id: string) => void
+interface ToastContextType {
+  success: (message: string, duration?: number) => void
+  error: (message: string, duration?: number) => void
+  info: (message: string, duration?: number) => void
+  removeToast: (id: string) => void
 }
 
-function ToastComponent({ toast, onRemove }: ToastProps) {
-  const [mounted, setMounted] = useState(false)
-  const [exiting, setExiting] = useState(false)
-  const removeRef = useRef(onRemove)
-  removeRef.current = onRemove
+const ToastContext = createContext<ToastContextType | undefined>(undefined)
 
-  const triggerRemove = useCallback(() => setExiting(true), [])
+export function useToast() {
+  const context = useContext(ToastContext)
+  if (!context) {
+    throw new Error('useToast must be used within a ToastProvider')
+  }
+  return context
+}
 
-  useLayoutEffect(() => {
-    const t = requestAnimationFrame(() => setMounted(true))
-    return () => cancelAnimationFrame(t)
-  }, [])
-
+function ToastComponent({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
   const duration = toast.duration ?? DEFAULT_DURATION
-  useEffect(() => {
-    const timer = setTimeout(() => setExiting(true), duration)
-    return () => clearTimeout(timer)
-  }, [toast.id, duration])
 
   useEffect(() => {
-    if (!exiting) return
-    const id = toast.id
-    const t = setTimeout(() => {
-      removeRef.current(id)
-    }, TOAST_EXIT_MS)
-    return () => clearTimeout(t)
-  }, [exiting, toast.id])
+    const timer = setTimeout(() => {
+      onRemove(toast.id)
+    }, duration)
+    return () => clearTimeout(timer)
+  }, [toast.id, duration, onRemove])
 
   const icons = {
     success: <CheckCircle className="h-5 w-5 text-green-600" />,
@@ -62,59 +56,61 @@ function ToastComponent({ toast, onRemove }: ToastProps) {
   }
 
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.2 } }}
       className={cn(
-        'relative flex items-center gap-3 p-4 rounded-lg border shadow-lg',
-        exiting ? 'toast-animate-out' : mounted ? 'toast-animate-in' : 'opacity-0',
+        'relative flex items-center gap-3 p-4 rounded-lg border shadow-lg w-full pointer-events-auto',
         bgColors[toast.type]
       )}
     >
       {icons[toast.type]}
       <p className="flex-1 text-sm font-medium">{toast.message}</p>
       <button
-        onClick={triggerRemove}
-        className="text-current opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+        onClick={() => onRemove(toast.id)}
+        className="text-current opacity-60 hover:opacity-100 transition-opacity cursor-pointer p-1"
         aria-label="Dismiss"
       >
         <X className="h-4 w-4" />
       </button>
+    </motion.div>
+  )
+}
+
+function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; removeToast: (id: string) => void }) {
+  return (
+    <div className="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-full max-w-sm pointer-events-none">
+      <AnimatePresence mode="popLayout">
+        {toasts.map((toast) => (
+          <ToastComponent key={toast.id} toast={toast} onRemove={removeToast} />
+        ))}
+      </AnimatePresence>
     </div>
   )
 }
 
-export function useToast() {
+export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
-
-  const addToast = (type: ToastType, message: string, duration?: number) => {
-    const id = Math.random().toString(36).substr(2, 9)
-    const newToast: Toast = { id, type, message, duration }
-    setToasts((prev) => [...prev, newToast])
-  }
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id))
   }, [])
 
-  const success = (message: string, duration?: number) => addToast('success', message, duration)
-  const error = (message: string, duration?: number) => addToast('error', message, duration)
-  const info = (message: string, duration?: number) => addToast('info', message, duration)
+  const addToast = useCallback((type: ToastType, message: string, duration?: number) => {
+    const id = Math.random().toString(36).substr(2, 9)
+    setToasts((prev) => [...prev, { id, type, message, duration }])
+  }, [])
 
-  const ToastContainer = () => {
-    if (toasts.length === 0) return null
+  const success = useCallback((message: string, duration?: number) => addToast('success', message, duration), [addToast])
+  const error = useCallback((message: string, duration?: number) => addToast('error', message, duration), [addToast])
+  const info = useCallback((message: string, duration?: number) => addToast('info', message, duration), [addToast])
 
-    return (
-      <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
-        {toasts.map((toast) => (
-          <ToastComponent key={toast.id} toast={toast} onRemove={removeToast} />
-        ))}
-      </div>
-    )
-  }
-
-  return {
-    ToastContainer,
-    success,
-    error,
-    info,
-  }
+  return (
+    <ToastContext.Provider value={{ success, error, info, removeToast }}>
+      {children}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+    </ToastContext.Provider>
+  )
 }
