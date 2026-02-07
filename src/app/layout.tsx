@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react"
 import { ErrorBoundary } from "@/components/ui/error-boundary"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { ToastProvider } from "@/components/ui/toast"
 import "./globals.css"
 
 const inter = Inter({
@@ -103,7 +104,8 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} antialiased touch-manipulation`}>
         <ThemeProvider storageKey="contrast-ratio-theme">
-          <div className="min-h-screen flex flex-col">
+          <ToastProvider>
+            <div className="min-h-screen flex flex-col">
           <header className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-40">
             <div className="container mx-auto px-4 py-3 sm:py-4">
               <div className="flex items-center justify-between gap-4">
@@ -146,7 +148,8 @@ export default function RootLayout({
               </div>
             </div>
           </footer>
-          </div>
+            </div>
+          </ToastProvider>
         </ThemeProvider>
         <Analytics />
       </body>

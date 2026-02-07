@@ -19,7 +19,7 @@ const ColorSuggestions = lazy(() => import('@/components/color-suggestions').the
 function HomeContent() {
   const { textColor, backgroundColor, contrastRatio, setTextColor, setBackgroundColor, swapColors, isInitialized } = useColors()
   const { history, isLoading, error, addToHistory, removeHistoryItem, clearHistory, retry } = useHistory()
-  const { success, error: showError, ToastContainer } = useToast()
+  const { success, error: showError } = useToast()
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const isMobile = useMobile()
@@ -243,7 +243,6 @@ function HomeContent() {
           </section>
         </div>
       </main>
-      <ToastContainer />
     </>
   )
 }
