@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useRef, useEffect, useMemo } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { HexColorPicker } from 'react-colorful'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { validateColor, toHex, getColorErrorMessage } from '@/lib/color-validation'
-import { parseColor, formatColor, ColorFormat } from '@/lib/color-conversion'
+import { parseColor, formatColor } from '@/lib/color-conversion'
 import { useKeyboardNavigation, getColorAriaLabels } from '@/lib/keyboard-navigation'
 import { useMobile } from '@/hooks/use-mobile'
 
@@ -72,27 +72,17 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
   const togglePicker = () => {
     if (disabled) return
 
-    // On desktop, toggle custom picker
-    if (!isMobile) {
-      if (!isOpen && inputRef.current) {
-        const rect = inputRef.current.getBoundingClientRect()
-        setPickerPosition({
-          top: rect.bottom + window.scrollY + 8,
-          left: rect.left + window.scrollX
-        })
-      }
-      setIsOpen(!isOpen)
+    // Position picker below input on desktop
+    if (!isMobile && !isOpen && inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect()
+      setPickerPosition({
+        top: rect.bottom + window.scrollY + 8,
+        left: rect.left + window.scrollX
+      })
     }
-    // On mobile, native picker is triggered by clicking the swatch button
+    setIsOpen(!isOpen)
   }
 
-  const handleNativeColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const color = e.target.value
-    if (color) {
-      onChange(color)
-      setInputValue(color)
-    }
-  }
 
   const getDisplayColor = () => {
     const parsed = parseColor(inputValue)
@@ -168,8 +158,6 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
     }
   }, [])
 
-  // Hidden native color input for mobile (used to trigger native picker)
-  const nativeColorInputRef = useRef<HTMLInputElement>(null)
 
   const display = getDisplayColor()
   const handleCopy = (value: string, format: 'rgb' | 'hsl') => {
@@ -185,19 +173,6 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
       <Label htmlFor={label.toLowerCase().replace(' ', '-')}>{label}</Label>
       <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row flex-wrap items-center gap-2 sm:gap-3'}`}>
         <div className={`relative ${isMobile ? 'flex-1' : 'min-w-40 w-44 shrink-0'}`}>
-          {/* Hidden native color input for mobile */}
-          {isMobile && (
-            <input
-              ref={nativeColorInputRef}
-              type="color"
-              value={toHex(value) || '#000000'}
-              onChange={handleNativeColorChange}
-              className="absolute opacity-0 pointer-events-none w-0 h-0"
-              aria-hidden="true"
-              tabIndex={-1}
-            />
-          )}
-
           {/* Text input - always visible */}
           <Input
             ref={inputRef}
@@ -224,22 +199,12 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
           <div
             className={`absolute ${isMobile ? 'right-3 top-1/2 -translate-y-1/2 w-12 h-12' : 'right-2 top-1/2 -translate-y-1/2 w-10 h-10'} border-2 border-border cursor-pointer hover:border-primary focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation flex items-center justify-center`}
             style={{ backgroundColor: toHex(value) || '#000000' }}
-            onClick={() => {
-              if (isMobile) {
-                nativeColorInputRef.current?.click()
-              } else {
-                togglePicker()
-              }
-            }}
+            onClick={togglePicker}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                if (isMobile) {
-                  nativeColorInputRef.current?.click()
-                } else {
-                  togglePicker()
-                }
+                togglePicker()
               }
             }}
             aria-label={`Open ${label} picker`}
@@ -312,7 +277,7 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
         {isOpen && !disabled && isMobile && (
           <div
             ref={pickerRef}
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-background/50 backdrop-blur-sm flex items-center justify-center p-4"
             onClick={() => setIsOpen(false)}
           >
             <div
@@ -338,6 +303,8 @@ export function ColorPicker({ label, value, onChange, disabled = false, contrast
                 <p className="text-sm text-muted-foreground">
                   Current: {toHex(value) || value}
                 </p>
+              </div>
+              <div className="mt-4 h-12" style={{ backgroundColor: toHex(value) || value }}>
               </div>
             </div>
           </div>

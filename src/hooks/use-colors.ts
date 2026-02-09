@@ -7,7 +7,7 @@ export function useColors() {
   const [textColor, setTextColor] = useState(DEFAULT_COLORS.TEXT)
   const [backgroundColor, setBackgroundColor] = useState(DEFAULT_COLORS.BACKGROUND)
   const [isInitialized, setIsInitialized] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [, startTransition] = useTransition()
 
   const searchParams = useSearchParams()
   const router = useRouter()

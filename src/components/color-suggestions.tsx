@@ -169,7 +169,7 @@ export function ColorSuggestions({ textColor, backgroundColor, onApplySuggestion
       <div className="p-4">
         <div className={`flex items-center justify-between ${expanded ? 'mb-4' : ''}`}>
           <div className="flex items-center gap-2">
-            <Lightbulb className="h-5 w-5 text-yellow-600" />
+            <Lightbulb className="h-5 w-5 text-yellow-600 shrink-0" />
             <h3 className="font-semibold">Accessibility Suggestions</h3>
           </div>
           <Button

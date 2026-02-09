@@ -8,7 +8,6 @@ import { HistoryModal } from '@/components/history-modal'
 import { useColors } from '@/hooks/use-colors'
 import { useHistory } from '@/hooks/use-history'
 import { useToast } from '@/components/ui/toast'
-import { useMobile } from '@/hooks/use-mobile'
 import { Button } from '@/components/ui/button'
 import { ArrowLeftRight, Copy } from 'lucide-react'
 import { LoadingSpinner } from '@/components/ui/loading'
@@ -22,7 +21,6 @@ function HomeContent() {
   const { success, error: showError } = useToast()
   const [isHistoryOpen, setIsHistoryOpen] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
-  const isMobile = useMobile()
 
   const handleCheck = async () => {
     if (isSaving) return
